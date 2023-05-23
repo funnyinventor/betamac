@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>music theory betamac</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+
+    #photo-container {
+      border: 1px solid black;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+
+    #answer-container {
+      margin-bottom: 20px;
+    }
+
+    #score {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    #timer {
+      font-size: 24px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="photo-container">
+    <img id="photo" src="" alt="Random Photo">
+  </div>
+  <div id="answer-container">
+    <input id="user-answer" type="text" placeholder="Your Answer">
+    <button id="submit-answer">Submit</button>
+  </div>
+  <div id="score">Score: <span id="score-value">0</span></div>
+  <div>
+    <button id="start-timer">Start</button>
+    <span id="timer">120</span>
+  </div>
+  <div>
+    <button id="fr-btn">Français</button>
+    <button id="en-btn">English</button>
+  </div>
+
+  <script>
+    var photos = [
+      { src: "do.png", answer: { en: ["C", "c"], fr: "do" } },
+      { src: "ré.png", answer: { en: ["D", "d"], fr: ["ré", "re"] } },
+      { src: "mi.png", answer: { en: ["E", "e"], fr: "mi" } },
+      { src: "fa.png", answer: { en: "F", fr: "fa" } },
+      { src: "sol.png", answer: { en: "G", fr: "sol" } },
+	  { src: "la.png", answer: { en: "A", fr: "la" } },
+	  { src: "si.png", answer: { en: "B", fr: "si" } },
+    ];
+
+    var currentIndex = 0;
+    var countdownTimer;
+    var score = 0;
+    var timerStarted = false;
+    var currentLanguage = "en"; // Default language is English
+
+    function showRandomPhoto() {
+      var randomIndex = Math.floor(Math.random() * photos.length);
+      currentIndex = randomIndex;
+      var photoElement = document.getElementById("photo");
+      photoElement.src = photos[randomIndex].src;
+      document.getElementById("user-answer").value = "";
+    }
+
+    function checkAnswer() {
+      var userAnswer = document.getElementById("user-answer").value.toLowerCase();
+      var correctAnswer = photos[currentIndex].answer[currentLanguage].toLowerCase();
+      if (userAnswer === correctAnswer) {
+        score++;
+        document.getElementById("score-value").textContent = score;
+      }
+      showRandomPhoto();
+    }
+
+    function changeLanguage(language) {
+      currentLanguage = language;
+      showRandomPhoto();
+    }
+
+    showRandomPhoto();
+
+    document.getElementById("submit-answer").addEventListener("click", checkAnswer);
+    document.getElementById("user-answer").addEventListener("keyup", function(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        checkAnswer();
+      }
+    });
+
+    document.getElementById("start-timer").addEventListener("click", startTimer);
+
+    document.getElementById("fr-btn").addEventListener("click", function() {
+      changeLanguage("fr");
+    });
+
+    document.getElementById("en-btn").addEventListener("click", function() {
+      changeLanguage("en");
+    });
+
+    function startTimer() {
+      if (!timerStarted) {
+        timerStarted = true;
+        var secondsLeft = 120;
+        var timerElement = document.getElementById("timer");
+
+        function countdown() {
+          secondsLeft--;
+          timerElement.textContent = secondsLeft;
+
+          if (secondsLeft <= 0) {
+            clearInterval(countdownTimer);
+          }
+        }
+
+        countdown();
+        countdownTimer = setInterval(countdown, 1000);
+      }
+    }
+  </script>
+</body>
+</html>
